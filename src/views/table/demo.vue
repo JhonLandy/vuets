@@ -1,6 +1,6 @@
 <template>
     <net-table
-        :data="tableData"
+        :data="list"
         :total="total"
         :column.sync="column"
         :page.sync="page"
@@ -21,6 +21,7 @@
 <script lang="ts">
     import {Vue, Watch, Component } from "vue-property-decorator"
     import NetTable from './components/Index'
+
     @Component({
         components: {
             NetTable
@@ -30,17 +31,11 @@
         name = 'tabless'
         page = 1
         limit = 10
-        list: any[] = []
-        tableData: any[] = []
-        private getData = (page: number, size: number) => {
-            const start = (page-1)*size
-            const end = page*size - 1
-            const temp: any = []
-            for (let i = start;i <= end;i++) {
-                temp.push(this.tableData[i])
-            }
-            this.list = temp
-        }
+        list: Array<any> = []
+        tableData: Array<any> = []
+        
+        
+
         @Watch('page')
         pages (val: number) {
             this.getData(val, this.limit)
@@ -49,7 +44,9 @@
         limits(val: number) {
             this.getData(this.page, val)
         }
-
+        get total() {
+            return this.tableData.length
+        }
         doDel() {
             this.$message({
                 message: '删除成功！',
@@ -69,15 +66,12 @@
                 type: 'success'
             })
         }
-        doRefresh(data: []) {
+        doRefresh(data: any[]) {
             console.log(data)
         }
         private data() {
             return {
                 isAdmin: true,
-                page: 1,
-                limit: 10,
-                total: 100,
                 checked: {
                     attrs: {
                         width: ' 50',
@@ -155,15 +149,14 @@
                             //events自定义事件@test注入table组件
                             return `
                                 <div>
-                                    <el-button type="success" @click="events('test', scope)" size="medium">通过</el-button>
+                                    <el-button type="success" size="medium">通过</el-button>
                                     <el-button type="danger" size="medium">删除</el-button>
                                 </div>
                             `
                         }
                     }
                 ],
-                data: [],
-                list: []
+                data: []
             }
         }
         private created() {
@@ -177,6 +170,16 @@
                 })
             }
             this.getData(this.page, this.limit)
+        }
+
+        getData(page: number, size: number) {
+            const start = (page-1)*size
+            const end = page*size - 1
+            const temp = []
+            for (let i = start;i <= end;i++) {
+                temp.push(this.tableData[i])
+            }
+            this.list = temp
         }
     }
 </script>

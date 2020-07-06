@@ -17,7 +17,7 @@
                 ></el-pagination>
             </div>
         </div>
-        <el-table  v-bind="$attrs" v-on="$listeners">
+        <el-table  v-bind="$attrs" v-on="$listeners" :data="data">
             <el-table-column
                 v-if="checked"
                 v-bind="checked.$attrs"
@@ -35,10 +35,10 @@
                     v-bind="attrs"
             >
                 <template v-slot="scope" v-if="template">
-                    <CreateDom  v-on="methods" :template="template" :_data="scope" />
+                    <CreateDom  v-on="methods" :template="template" :scope="scope" />
                 </template>
                 <template v-slot:header="scope" v-if="header">
-                    <CreateDom  v-on="methods"  :_data="scope" :template="header"/>
+                    <CreateDom  v-on="methods"  :scope="scope" :template="header"/>
                 </template>
             </el-table-column>
         </el-table>
@@ -64,7 +64,9 @@
 
 <script lang="ts">
     import CreateDom from './CreateDom'
-    import { Component, Prop, Vue, Provide, Inject } from "vue-property-decorator";
+    import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+    
+    
     @Component({
         components: {
             CreateDom
@@ -72,66 +74,57 @@
     })
     export default class Table extends Vue {
         page = 1
-        size = 10
         isChecked = false
-        @Provide('Instance')
-        Instance = this
+
+        @Prop()
+        column!: any[]
 
         @Prop({
-            type: Array,
-            default: () => []
-        })
-        column: any
-
-        @Prop({
-            type: Number,
             default: 0
         })
-        limit: any
+        limit!: number
 
         @Prop({
-            type: Array,
-            default: () => [10, 20, 30, 50]
+            default: [10, 20, 30, 50]
         })
-        limitGroup: any
+        limitGroup!: any[]
 
         @Prop({
-            type: Number,
             default: 0
         })
-        total: any
+        total!: number
 
-        @Prop({
-            type: Function
-        })
-        pagination: any 
+        @Prop()
+        pagination!: () => void 
 
-        @Prop({
-            default: ''
-        })
-        checked: any
+        @Prop()
+        checked!: any
 
-        created() {
-            console.log()
+        @Prop()
+        data!: any
+
+        get size() {
+            return this.limit
         }
+        
         onSize(val: any) {
-            this.size = val
+             this.$emit('update:limit', val)
         }
         onCurrent(val: any) {
             this.currentPage = val
         }
         checkAll(value: any) {
-            // this.data.forEach((item: any) => {
-            //     item.checked = this.isChecked = value
-            // })
+            this.data.forEach((item: any) => {
+                item.checked = this.isChecked = value
+            })
         }
         checkSingle({row}: any) {
-            // row.checked = !row.checked
-            // if (!row.checked) {
-            //     this.isChecked = false
-            // } else {
-            //     this.isChecked = this.data.every((item: any) => item.checked)
-            // }
+            row.checked = !row.checked
+            if (!row.checked) {
+                this.isChecked = false
+            } else {
+                this.isChecked = this.data.every((item: any) => item.checked)
+            }
         }
 
         get currentPage() {
@@ -142,7 +135,6 @@
             this.pagination && this.pagination()
         }
     }
-   
 </script>
 
 <style lang="scss" scoped>
