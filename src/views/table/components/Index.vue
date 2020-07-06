@@ -85,7 +85,7 @@
         limit!: number
 
         @Prop({
-            default: [10, 20, 30, 50]
+            default: () => [10, 20, 30, 50]
         })
         limitGroup!: any[]
 
