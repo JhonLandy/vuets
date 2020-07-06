@@ -76,7 +76,9 @@
         page = 1
         isChecked = false
 
-        @Prop()
+        @Prop({
+            default: () => []
+        })
         column!: any[]
 
         @Prop({
