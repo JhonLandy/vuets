@@ -21,7 +21,6 @@
 <script lang="ts">
     import {Vue, Watch, Component } from "vue-property-decorator"
     import NetTable from './components/Index'
-
     @Component({
         components: {
             NetTable

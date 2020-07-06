@@ -1,10 +1,11 @@
 <script lang="ts">
-    import {Vue, Inject, Prop, Component} from 'vue-property-decorator'
+    import {Vue, Component} from 'vue-property-decorator'
 
     interface Mmethods {
-        [propName: string]: ((...params: any) => void);
+        [propName: string]: (...params: any) => void;
     }
-    
+
+    type _template = (template: object) => string | string
 
     function mapMethods(methods: any) {
         const _methods: Mmethods = {}
@@ -17,6 +18,7 @@
         }
         return _methods
     }
+
     @Component({
         props: {
             _data: {
@@ -28,18 +30,11 @@
             }
         }
     })
-    type _template = (template: string) => string | string
-
     export default class CreateDom extends Vue {
-       
         name = 'CreateDom'
         template!: _template
-        _data = {}
-        private data() {
-            return {
-                ...this._data
-            }
-        }
+        _data!: any
+        
         get scope() {
             return this._data
         }
@@ -51,6 +46,8 @@
             let template = ""
             if (typeof this.template === 'function') {
                 template = this.template(this.scope)
+            } else {
+                template = this.template
             }
             if (!template) {
                 console.error("CreateDom组件找不到模版内容template，请检查！")
