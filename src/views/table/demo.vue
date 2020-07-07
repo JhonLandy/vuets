@@ -34,25 +34,27 @@
         list: Array<any> = []
         tableData: Array<any> = []
         
-        
-
         @Watch('page')
         pages (val: number) {
             this.getData(val, this.limit)
         }
+
         @Watch('limit')
         limits(val: number) {
             this.getData(this.page, val)
         }
+
         get total() {
             return this.tableData.length
         }
+
         doDel() {
             this.$message({
                 message: '删除成功！',
                 type: 'error'
             })
         }
+
         doRecover({row}: any) {
             row.status = '1'//地址引用问题，可触发子组件table更新,一般情况可用，特殊情况不推荐
             this.$message({
@@ -60,6 +62,7 @@
                 type: 'success'
             })
         }
+        
         dbClick() {
             this.$message({
                 message: '你双击了！',
@@ -149,10 +152,14 @@
                             //events自定义事件@test注入table组件
                             return `
                                 <div>
-                                    <el-button type="success" size="medium">通过</el-button>
-                                    <el-button type="danger" size="medium">删除</el-button>
+                                    <el-button type="success" size="medium" @click="doRecover(scope)">通过</el-button>
+                                    <el-button type="danger" size="medium" @click="doDel">删除</el-button>
                                 </div>
                             `
+                        },
+                        methods: {
+                            doRecover: this.doRecover,
+                            doDel: this.doDel
                         }
                     }
                 ],

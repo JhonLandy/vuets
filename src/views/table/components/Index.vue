@@ -65,17 +65,20 @@
 <script lang="ts">
     import CreateDom from './CreateDom'
     import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-    
-    
+    interface as{
+        trick(): any
+    }
+
     @Component({
         components: {
             CreateDom
         }
     })
-    export default class Table extends Vue {
+    export default class Table extends Vue{
+       
         page = 1
         isChecked = false
-
+        
         @Prop({
             default: () => []
         })
@@ -112,6 +115,7 @@
         onSize(val: any) {
              this.$emit('update:limit', val)
         }
+
         onCurrent(val: any) {
             this.currentPage = val
         }
